@@ -1,5 +1,10 @@
 from ouimeaux.environment import Environment
 import time
+import json
+import datetime
+import codecs
+from urllib2 import urlopen
+from dateutil import tz
 
 def on_switch(switch):
     print "Switch found!", switch.name
@@ -15,18 +20,11 @@ env.discover(seconds = 3)
 
 switch = env.get_switch("Wemo Mini")
 
-from urllib2 import urlopen
-import json
-import datetime
-from dateutil import tz
-
-# METHOD 2: Auto-detect zones:
 from_zone = tz.tzutc()
 to_zone = tz.tzlocal()
 
 resp = urlopen("https://api.sunrise-sunset.org/json?lat=40.94&lng=-73.83").read()
 
-import codecs
 reader = codecs.getreader("utf-8")
 
 j = json.loads(resp)
@@ -45,14 +43,14 @@ localOnTime = localOnTime - datetime.timedelta(minutes=25)
 offDateTime = datetime.datetime.combine(todayDate, datetime.time(22, 0, 0))
 offDateTime = offDateTime.replace(tzinfo=to_zone)
 
-print("On time:", localOnTime)
+print "On time:", localOnTime
+print "Off time:", offDateTime
 print
-print("Off time:", offDateTime)
 
 now = datetime.datetime.now()
 now = now.replace(tzinfo=to_zone)
 
-print "now", now
+print "Now:", now
 
 if now > localOnTime and offDateTime > now:
     print "turn on"
