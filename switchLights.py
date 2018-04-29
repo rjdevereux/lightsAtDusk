@@ -33,11 +33,18 @@ j = json.loads(resp)
 sunrise = j["results"]["civil_twilight_begin"]
 sunriseObject = datetime.datetime.strptime(sunrise, '%I:%M:%S %p')
 
-timeString = j['results']['civil_twilight_end']
-datetime_object = datetime.datetime.strptime(timeString, '%I:%M:%S %p')
+civilTwilightEnd = j['results']['civil_twilight_end']
+datetime_object = datetime.datetime.strptime(civilTwilightEnd, '%I:%M:%S %p')
 
 todayDate = datetime.datetime.today().date()
-todayTime = datetime.datetime.combine(todayDate, datetime_object.time())
+
+#handles when civil twilight end is after midnight in UTC
+if datetime_object.hour > 12:
+    todayTime = datetime.datetime.combine(todayDate, datetime_object.time())
+else:
+    tomorrow = todayDate + datetime.timedelta(days=1)
+    todayTime = datetime.datetime.combine(tomorrow, datetime_object.time())
+
 sunriseTime = datetime.datetime.combine(todayDate, sunriseObject.time())
 
 utc = todayTime.replace(tzinfo=from_zone)
