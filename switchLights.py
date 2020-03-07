@@ -88,6 +88,6 @@ if now > localOnTime and offDateTime > now:
 
 print "turn off"
 landscapeLights.off()
-porchLights.on()
+porchLights.off()
 
 print "finished"
