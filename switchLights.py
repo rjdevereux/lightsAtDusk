@@ -19,7 +19,8 @@ env.start()
 
 env.discover(seconds = 3)
 
-switch = env.get_switch("Wemo Mini")
+landscapeLights = env.get_switch("Wemo Mini")
+porchLights = env.get_switch("Porch")
 
 from_zone = tz.tzutc()
 to_zone = tz.tzlocal()
@@ -74,16 +75,19 @@ print "Now:", now
 
 if now > earliestOnTime and now < localSunrise:
     print "turn on morning"
-    switch.on()
+    landscapeLights.on()
+    porchLights.on()
     sys.exit()
 
 if now > localOnTime and offDateTime > now:
     print "turn on night"
-    switch.on()
+    landscapeLights.on()
+    porchLights.on()
     sys.exit()
 
 
 print "turn off"
-switch.off()
+landscapeLights.off()
+porchLights.on()
 
 print "finished"
