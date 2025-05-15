@@ -17,15 +17,22 @@ env = Environment(on_switch, on_motion)
 
 env.start()
 
-env.discover(seconds = 3)
+env.discover(seconds = 6)
 
-landscapeLights = env.get_switch("Wemo Mini")
-porchLights = env.get_switch("Porch")
+try:
+    landscapeLights = env.get_switch("Wemo Mini")
+except:
+    print "did not find landscape"
+
+try:
+    porchLights = env.get_switch("Porch")
+except:
+    print "did not find porch"
 
 from_zone = tz.tzutc()
 to_zone = tz.tzlocal()
 
-resp = urlopen("https://api.sunrise-sunset.org/json?lat=40.94&lng=-73.83").read()
+resp = urlopen("http://api.sunrise-sunset.org/json?lat=40.94&lng=-73.83").read()
 
 reader = codecs.getreader("utf-8")
 
@@ -73,21 +80,43 @@ now = now.replace(tzinfo=to_zone)
 
 print "Now:", now
 
+def porchOn():
+    try:
+        porchLights.on()
+    except:
+        print('failed turning on porch lights')
+
+def landscapeOn():
+    try:
+        landscapeLights.on()
+    except:
+        print('failed turning on landscape lights')
+
 if now > earliestOnTime and now < localSunrise:
     print "turn on morning"
-    landscapeLights.on()
-    porchLights.on()
+    landscapeOn()
+    #landscapeLights.on()
+    porchOn()
     sys.exit()
 
 if now > localOnTime and offDateTime > now:
     print "turn on night"
-    landscapeLights.on()
-    porchLights.on()
+    #landscapeLights.on()
+    landscapeOn()
+    porchOn()
+    #porchLights.on()
     sys.exit()
 
 
 print "turn off"
-landscapeLights.off()
-porchLights.off()
+
+try:
+    porchLights.off()
+except:
+    print('failed turning off porch lights')
+try:
+    landscapeLights.off()
+except:
+    print('failed turning off landscrape lights')
 
 print "finished"
